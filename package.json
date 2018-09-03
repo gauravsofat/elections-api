@@ -1,0 +1,14 @@
+{
+  "name": "elections",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Gaurav Sofat",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "helmet": "^3.13.0",
+    "mongoose": "^5.2.12",
+    "morgan": "^1.9.0"
+  }
+}
