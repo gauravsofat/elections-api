@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const committeeSchema = new Schema(
   {
     comName: { type: String, required: true }, // Committee Name
-    batch: { type: String, required: true },
+    batches: [String], // Array Of Batches Voting For These Seats
     seats: { type: Number, required: true }, // Number Of Positions
     candidates: [{ sid: String, name: String }] // Contesting Candidates List
   },
