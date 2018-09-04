@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+const login = require("./routes/login");
+
 // Connect To DB
 mongoose.connect(
   process.env.DB_HOST,
@@ -34,6 +36,8 @@ app.use((req, res, next) => {
   res.set("Cache-Control", "no-cache");
   next();
 });
+
+app.use("/login", login);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
