@@ -8,6 +8,9 @@ exports.authLogin = (req, res) => {
       if (user === null || user.pwd !== req.body.pwd) {
         console.log("Incorrect Id/Password");
         res.json({ message: "Incorrect Id/Password" });
+      } else if (user.hasVoted) {
+        console.log("Repeat Attempt: ", user.sid);
+        res.json({ message: "User Has Already Voted" });
       } else {
         console.log("Successful Login: ", user.sid);
         const token = jwt.sign(
