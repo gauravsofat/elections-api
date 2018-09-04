@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+const candidate = require("./routes/candidate");
 const committee = require("./routes/committee");
 const login = require("./routes/login");
 const vote = require("./routes/vote");
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/candidate", candidate);
 app.use("/committee", committee);
 app.use("/login", login);
 app.use("/vote", vote);
