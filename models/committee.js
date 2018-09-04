@@ -3,9 +3,9 @@ const { Schema } = mongoose;
 
 const committeeSchema = new Schema(
   {
-    comName: String, // Committee Name
-    batch: String,
-    seats: Number, // Number Of Positions
+    comName: { type: String, required: true }, // Committee Name
+    batch: { type: String, required: true },
+    seats: { type: Number, required: true }, // Number Of Positions
     candidates: [{ sid: String, name: String }] // Contesting Candidates List
   },
   { collection: "committees" }

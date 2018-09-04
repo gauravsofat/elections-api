@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Committee = require("../models/committee");
 
 exports.authLogin = (req, res) => {
   User.findOne({ sid: req.body.sid })
@@ -12,20 +13,27 @@ exports.authLogin = (req, res) => {
         console.log("Repeat Attempt: ", user.sid);
         res.json({ message: "User Has Already Voted" });
       } else {
-        console.log("Successful Login: ", user.sid);
-        const token = jwt.sign(
-          {
-            sid: user.sid,
-            admin: user.sid === process.env.ADMIN_ID
-          },
-          process.env.LOGIN_SECRET,
-          { expiresIn: "1h" }
-        );
-        res.json({
-          message: "Successful Login",
-          token,
-          admin: user.sid === process.env.ADMIN_ID
-        });
+        Committee.find()
+          .or([{ batch: user.batch }, { comName: user.floor }])
+          .exec()
+          .then(function(comList) {
+            console.log("Successful Login: ", user.sid);
+            console.log("commList:", comList);
+            const token = jwt.sign(
+              {
+                sid: user.sid,
+                admin: user.sid === process.env.ADMIN_ID
+              },
+              process.env.LOGIN_SECRET,
+              { expiresIn: "1h" }
+            );
+            res.json({
+              list: comList,
+              token,
+              admin: user.sid === process.env.ADMIN_ID,
+              message: "Successful Login"
+            });
+          });
       }
     });
 };
