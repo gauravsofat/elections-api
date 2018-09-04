@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const login = require("./routes/login");
+const vote = require("./routes/vote");
 
 // Connect To DB
 mongoose.connect(
@@ -38,6 +39,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/login", login);
+app.use("/vote", vote);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
