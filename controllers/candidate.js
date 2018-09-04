@@ -28,7 +28,7 @@ exports.addNewCandidate = (req, res) => {
     cpi: req.body.cpi
   })
     .then(function(candidate) {
-      Committee.update(
+      Committee.updateOne(
         { comName: candidate.comName, batches: candidate.batch },
         { $push: { candidates: { sid: candidate.sid, name: candidate.name } } }
       )

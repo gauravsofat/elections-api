@@ -49,7 +49,7 @@ exports.submitVote = (req, res) => {
     );
   }
   Promise.all(promises).then(function() {
-    User.findOneAndUpdate({ sid: req.body.sid }, { hasVoted: true })
+    User.updateOne({ sid: req.body.sid }, { hasVoted: true })
       .then(function() {
         console.log("Voting Complete", req.body.sid);
         res.json({ message: "Vote Successfully Submitted" });
