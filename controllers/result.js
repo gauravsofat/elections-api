@@ -40,10 +40,12 @@ async function getCommitteeResults(committee) {
   while (activeCandidates > numOfSeats) {
     lastCandidate = await getLastCandidate(voteCount, voteList);
     delete voteCount[lastCandidate];
+    activeCandidates--;
     voteList = await updateVoteList(voteCount, voteList);
     voteCount = await resetVoteCount(voteCount);
     voteCount = await getVoteCount(voteCount, voteList);
   }
+  committeeResult.winners = Object.keys(voteCount);
 
   return committeeResult;
 }
