@@ -3,6 +3,24 @@ const Committee = require("../models/committee");
 const Vote = require("../models/vote");
 const resolveTie = require("./resolveTie");
 
+exports.isAdmin = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (!token) {
+    console.log("Missing Token");
+    res.json({ message: "Token Not Provided." });
+  } else {
+    jwt.verify(token, process.env.LOGIN_SECRET, function(err, decoded) {
+      if (err) {
+        console.log("Error Decoding Token.");
+        res.json({ message: "Error Decoding Token." });
+      } else if (decoded.sid !== process.env.ADMIN_ID) {
+        console.log("User Does Not Have Admin Rights");
+        res.json({ message: "User Does Not Have Admin Rights" });
+      } else next();
+    });
+  }
+};
+
 exports.evaluateResult = (req, res) => {
   Committee.find()
     .exec()
@@ -26,28 +44,45 @@ async function getAllResults(comList) {
 }
 
 async function getCommitteeResults(committee) {
-  const committeeResult = {};
-  committeeResult.comName = committee.comName;
-  committeeResult.batch = committee.batches;
+  return new Promise(async resolve => {
+    const committeeResult = {};
+    committeeResult.comName = committee.comName;
+    committeeResult.batch = committee.batches;
 
-  let voteList = await getVoteList(committee);
-  const numOfSeats = committee.seats;
-  let activeCandidates = committee.candidates.length;
+    voteList = await getVoteList(committee);
 
-  let voteCount = await createVoteCount(committee);
-  voteCount = await getVoteCount(voteCount, voteList);
+    const numOfSeats = committee.seats;
+    let activeCandidates = committee.candidates.length;
 
-  while (activeCandidates > numOfSeats) {
-    lastCandidate = await getLastCandidate(voteCount, voteList);
-    delete voteCount[lastCandidate];
-    activeCandidates--;
-    voteList = await updateVoteList(voteCount, voteList);
-    voteCount = await resetVoteCount(voteCount);
+    voteCount = await createVoteCount(committee);
     voteCount = await getVoteCount(voteCount, voteList);
-  }
-  committeeResult.winners = Object.keys(voteCount);
 
-  return committeeResult;
+    async.whilst(
+      function() {
+        return activeCandidates > numOfSeats;
+      },
+      async function() {
+        return new Promise(async resolve => {
+          console.log(voteCount);
+          lastCandidate = await getLastCandidate(voteCount, voteList);
+          console.log(lastCandidate);
+          delete voteCount[lastCandidate];
+          activeCandidates--;
+          voteList = await updateVoteList(voteCount, voteList);
+          voteCount = await resetVoteCount(voteCount);
+          voteCount = await getVoteCount(voteCount, voteList);
+          resolve(voteCount);
+        });
+      },
+      function(err, voteCount) {
+        if (err) throw err;
+        console.log(voteCount);
+        committeeResult.candidates = committee.candidates;
+        committeeResult.winners = Object.keys(voteCount);
+        resolve(committeeResult);
+      }
+    );
+  });
 }
 
 async function getVoteList(committee) {
@@ -95,8 +130,9 @@ async function getLastCandidate(voteCount, voteList) {
     const minCandidateArr = await getMinCandidateArr(voteCount);
     if (minCandidateArr.length == 1) resolve(minCandidateArr[0]);
     else {
-      const lastCandidate = await resolveTie(minCandidateArr, voteList);
-      resolve(lastCandidate);
+      resolve("Tie");
+      // const lastCandidate = await resolveTie(minCandidateArr, voteList);
+      // resolve(lastCandidate);
     }
   });
 }

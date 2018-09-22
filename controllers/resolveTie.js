@@ -14,7 +14,7 @@ module.exports = async (minCandidateArr, voteList) => {
 async function checkCrossPrefs(minCandidateArr, voteList) {
   let voteCount = await createVoteCount(minCandidateArr);
   voteCount = getVoteCount(voteCount, voteList);
-  const minVoteCount = Math.min(...Object.value(voteCount));
+  const minVoteCount = Math.min(...Object.values(voteCount));
   const minVoteCandidateArr = await geMinVoteCandidateArr(
     voteCount,
     minVoteCount
