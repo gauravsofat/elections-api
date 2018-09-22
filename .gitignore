@@ -73,4 +73,4 @@ typings/
 .serverless
 
 # Custom Files
-dbSeed.js
+voteLogicTests/*
