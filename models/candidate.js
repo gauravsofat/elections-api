@@ -14,7 +14,7 @@ const candidateSchema = new Schema(
 
 // Create A Virtual Attribute Batch From A Substring Of 'sid'
 candidateSchema.virtual("batch").get(function() {
-  return Number(this.sid.toString().substring(2, 6));
+  return this.sid.substring(2, 6);
 });
 
 module.exports = mongoose.model("Candidate", candidateSchema);

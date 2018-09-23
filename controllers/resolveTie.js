@@ -12,28 +12,25 @@ module.exports = async (minCandidateArr, voteList) => {
 };
 
 async function checkCrossPrefs(minCandidateArr, voteList) {
+  console.log("Checking Cross Preferences...");
   let voteCount = await createVoteCount(minCandidateArr);
-  voteCount = getVoteCount(voteCount, voteList);
+  voteCount = await getVoteCount(voteCount, voteList);
   const minVoteCount = Math.min(...Object.values(voteCount));
-  const minVoteCandidateArr = await geMinVoteCandidateArr(
-    voteCount,
-    minVoteCount
-  );
-  if (minVoteCandidateArr.length == 1) return minVoteCandidateArr[0];
+  const minVoteCandidates = await geMinVoteCandidates(voteCount, minVoteCount);
+  if (minVoteCandidates.length == 1) return minVoteCandidates[0];
   else return null;
 }
 
 async function createVoteCount(minCandidateArr) {
   return new Promise(resolve => {
     let voteCount = {};
-    async.transform(
+    async.each(
       minCandidateArr,
-      voteCount,
-      function(voteCount, candidate, index, cb) {
-        voteCount[candidate] = 0;
-        cb(); // Is This Really Required?
+      function(candidateSid, cb) {
+        voteCount[candidateSid] = 0;
+        cb();
       },
-      function(err, voteCount) {
+      function(err) {
         if (err) throw err;
         resolve(voteCount);
       }
@@ -52,6 +49,7 @@ async function getVoteCount(voteCount, voteList) {
           voteCount.hasOwnProperty(vote.prefs[1])
         )
           voteCount[vote.prefs[1]]++;
+        cb();
       },
       function(err) {
         if (err) throw err;
@@ -61,16 +59,16 @@ async function getVoteCount(voteCount, voteList) {
   });
 }
 
-async function geMinVoteCandidateArr(voteCount, minVoteCount) {
+async function geMinVoteCandidates(voteCount, minVoteCount) {
   return new Promise(resolve => {
     async.filter(
-      voteCount,
+      Object.keys(voteCount),
       function(candidate, cb) {
         cb(null, voteCount[candidate] == minVoteCount);
       },
-      function(err, minVoteCandidateArr) {
+      function(err, minVoteCandidates) {
         if (err) throw err;
-        resolve(minVoteCandidateArr);
+        resolve(minVoteCandidates);
       }
     );
   });
@@ -84,38 +82,43 @@ async function checkSeniority(minCandidateArr) {
 }
 
 async function checkSeniorityByYear(minCandidateArr) {
-  const yearArr = await getYearArr(minCandidateArr);
-  const minYear = Math.min(...yearArr);
-  const minYearCandidates = await getMinYearCandidates(yearArr, minYear);
-  if (minYearCandidates.length == 1) return minYearCandidates[0];
+  console.log("Checking Seniority By Year...");
+  const yearObj = await getYearObj(minCandidateArr);
+  const maxYear = Math.max(...Object.values(yearObj));
+  const maxYearCandidates = await getMaxYearCandidates(yearObj, maxYear);
+  if (maxYearCandidates.length == 1) return maxYearCandidates[0];
   else return null;
 }
 
-async function getYearArr(minCandidateArr) {
+async function getYearObj(minCandidateArr) {
   return new Promise(resolve => {
-    async.map(
+    let yearObj = {};
+    async.each(
       minCandidateArr,
-      function(candidate) {
-        return Candidate.find({ sid: candidate })
+      function(candidateSid, cb) {
+        Candidate.findOne({ sid: candidateSid })
           .exec()
-          .then(function(doc) {
-            return Number(doc.batch.substring(0, 2));
+          .then(function(queryResult) {
+            yearObj[queryResult.sid] = Number(
+              queryResult.batch.substring(0, 2)
+            );
+            cb();
           });
       },
-      function(err, yearArr) {
+      function(err) {
         if (err) throw err;
-        resolve(yearArr);
+        resolve(yearObj);
       }
     );
   });
 }
 
-async function getMinYearCandidates(yearArr, minYear) {
+async function getMaxYearCandidates(yearObj, minYear) {
   return new Promise(resolve => {
     async.filter(
-      yearArr,
+      Object.keys(yearObj),
       function(candidate, cb) {
-        cb(null, candidate == minYear);
+        cb(null, yearObj[candidate] == minYear);
       },
       function(err, minYearCandidates) {
         if (err) throw err;
@@ -126,80 +129,86 @@ async function getMinYearCandidates(yearArr, minYear) {
 }
 
 async function checkSeniorityByBatch(minCandidateArr) {
-  const batchArr = await getBatchArr(minCandidateArr);
-  const maxBatch = Math.max(...batchArr);
-  const maxBatchCandidates = await getMaxBatchCandidates(batchArr, maxBatch);
-  if (maxBatchCandidates.length == 1) return maxBatchCandidates[0];
+  console.log("Checking Seniority By Batch...");
+  const batchObj = await getBatchObj(minCandidateArr);
+  const minBatch = Math.min(...Object.values(batchObj));
+  const minBatchCandidates = await getMinBatchCandidates(batchObj, minBatch);
+  if (minBatchCandidates.length == 1) return minBatchCandidates[0];
   else return null;
 }
 
-async function getBatchArr(minCandidateArr) {
+async function getBatchObj(minCandidateArr) {
   return new Promise(resolve => {
-    async.map(
+    let batchObj = {};
+    async.each(
       minCandidateArr,
-      function(candidate) {
-        return Candidate.find({ sid: candidate })
+      function(candidate, cb) {
+        Candidate.findOne({ sid: candidate })
           .exec()
           .then(function(doc) {
-            return Number(doc.batch.subtring(2, 4));
+            batchObj[doc.sid] = Number(doc.batch.substring(2, 4));
+            cb();
           });
       },
-      function(err, batchArr) {
+      function(err) {
         if (err) throw err;
-        resolve(batchArr);
+        resolve(batchObj);
       }
     );
   });
 }
 
-async function getMaxBatchCandidates(batchArr, maxBatch) {
+async function getMinBatchCandidates(batchObj, minBatch) {
   return new Promise(resolve => {
     async.filter(
-      batchArr,
-      function(candidateBatch, cb) {
-        cb(null, candidateBatch == maxBatch);
+      Object.keys(batchObj),
+      function(candidate, cb) {
+        cb(null, batchObj[candidate] == minBatch);
       },
-      function(err, maxBatchCandidates) {
+      function(err, minBatchCandidates) {
         if (err) throw err;
-        resolve(maxBatchCandidates);
+        resolve(minBatchCandidates);
       }
     );
   });
 }
 
 async function checkCpi(minCandidateArr) {
-  const cpiArr = await getCpiArr(minCandidateArr);
-  const minCpi = Math.min(...cpiArr);
-  const minCpiCandidates = await getMinCpiCandidates(cpiArr, minCpi);
+  console.log("Checking CPI...");
+  const cpiObj = await getCpiObj(minCandidateArr);
+  const minCpi = Math.min(...Object.values(cpiObj));
+  const minCpiCandidates = await getMinCpiCandidates(cpiObj, minCpi);
   if (minCpiCandidates.length == 1) return minCpiCandidates[0];
   return null;
 }
 
-async function getCpiArr(minCandidateArr) {
+async function getCpiObj(minCandidateArr) {
   return new Promise(resolve => {
-    async.map(
+    let cpiObj = {};
+    async.each(
       minCandidateArr,
-      function(candidate) {
-        return Candidate.find({ sid: candidate })
+      function(candidateSid, cb) {
+        Candidate.findOne({ sid: candidateSid })
           .exec()
-          .then(function(doc) {
-            return doc.cpi;
+          .then(function(queryResult) {
+            cpiObj[queryResult.sid] = queryResult.cpi;
+            cb();
           });
       },
-      function(err, cpiArr) {
+      function(err) {
         if (err) throw err;
-        resolve(cpiArr);
+        resolve(cpiObj);
       }
     );
   });
 }
 
-async function getMinCpiCandidates(cpiArr, minCpi) {
+async function getMinCpiCandidates(cpiObj, minCpi) {
   return new Promise(resolve => {
     async.filter(
-      cpiArr,
-      function(candidateCpi, cb) {
-        cb(null, candidateCpi == minCpi);
+      Object.keys(cpiObj),
+      function(candidate, cb) {
+        cb(null, cpiObj[candidate] == minCpi);
       },
       function(err, minCpiCandidates) {
         if (err) throw err;
@@ -210,5 +219,6 @@ async function getMinCpiCandidates(cpiArr, minCpi) {
 }
 
 async function randomSelection(minCandidateArr) {
+  console.log("Eliminating Using Random Selection...");
   return minCandidateArr[Math.floor(Math.random() * minCandidateArr.length)];
 }

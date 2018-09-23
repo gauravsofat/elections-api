@@ -130,9 +130,8 @@ async function getLastCandidate(voteCount, voteList) {
     const minCandidateArr = await getMinCandidateArr(voteCount);
     if (minCandidateArr.length == 1) resolve(minCandidateArr[0]);
     else {
-      resolve("Tie");
-      // const lastCandidate = await resolveTie(minCandidateArr, voteList);
-      // resolve(lastCandidate);
+      const lastCandidate = await resolveTie(minCandidateArr, voteList);
+      resolve(lastCandidate);
     }
   });
 }
