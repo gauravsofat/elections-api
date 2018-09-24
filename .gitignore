@@ -71,6 +71,3 @@ typings/
 
 # Serverless directories
 .serverless
-
-# Custom Files
-voteLogicTests/*

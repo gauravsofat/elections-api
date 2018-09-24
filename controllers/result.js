@@ -47,7 +47,7 @@ async function getCommitteeResults(committee) {
   return new Promise(async resolve => {
     const committeeResult = {};
     committeeResult.comName = committee.comName;
-    committeeResult.batch = committee.batches;
+    committeeResult.batches = committee.batches;
 
     voteList = await getVoteList(committee);
 
