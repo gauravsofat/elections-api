@@ -46,3 +46,15 @@ exports.addNewCandidate = (req, res) => {
       res.json({ message: "Database Error. Failed To Add Candidate." });
     });
 };
+
+exports.getCandidateList = (req, res) => {
+  Candidate.find()
+    .exec()
+    .then(function(candidateList) {
+      res.json(candidateList);
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.json({ message: "Database Error. Could Not Obtain Candidate List" });
+    });
+};
