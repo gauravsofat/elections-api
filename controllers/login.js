@@ -8,10 +8,10 @@ exports.authLogin = (req, res) => {
     .then(function(user) {
       if (user === null || user.pwd !== req.body.pwd) {
         console.log("Incorrect Id/Password");
-        res.json({ message: "Incorrect Id/Password" });
+        res.status(500).send("Incorrect Id/Password");
       } else if (user.hasVoted) {
         console.log("Repeat Attempt: ", user.sid);
-        res.json({ message: "User Has Already Voted" });
+        res.status(500).send("User Has Already Voted");
       } else {
         Committee.find()
           .or({ batches: user.batch }, { comName: user.floor })

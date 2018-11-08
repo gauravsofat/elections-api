@@ -2,20 +2,21 @@ const async = require("async");
 const Committee = require("../models/committee");
 const Vote = require("../models/vote");
 const resolveTie = require("./resolveTie");
+const jwt = require("jsonwebtoken");
 
 exports.isAdmin = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token) {
     console.log("Missing Token");
-    res.json({ message: "Token Not Provided." });
+    res.status(500).send("Token Not Provided.");
   } else {
     jwt.verify(token, process.env.LOGIN_SECRET, function(err, decoded) {
       if (err) {
         console.log("Error Decoding Token.");
-        res.json({ message: "Error Decoding Token." });
+        res.status(500).send("Error Decoding Token.");
       } else if (decoded.sid !== process.env.ADMIN_ID) {
         console.log("User Does Not Have Admin Rights");
-        res.json({ message: "User Does Not Have Admin Rights" });
+        res.status(500).send("User Does Not Have Admin Rights");
       } else next();
     });
   }
@@ -30,7 +31,7 @@ exports.evaluateResult = (req, res) => {
     })
     .catch(function(err) {
       console.log(err);
-      res.json({ message: "Database Error. Failed To Evaluate Result." });
+      res.status(500).send("Database Error. Failed To Evaluate Result.");
     });
 };
 
@@ -94,7 +95,7 @@ async function getVoteList(committee) {
       })
       .catch(function(err) {
         console.log(err);
-        res.json({ message: "Database Error. Failed To Obtain Vote List." });
+        res.status(500).send("Database Error. Failed To Obtain Vote List.");
       });
   });
 }

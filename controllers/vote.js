@@ -6,27 +6,27 @@ exports.canUserVote = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (!token) {
     console.log("Token Not Provided");
-    res.json({ message: "Token Not Provided." });
+    res.status(500).send("Token Not Provided.");
   } else {
     jwt.verify(token, process.env.LOGIN_SECRET, (err, decodedUser) => {
       if (err) {
         console.log(err);
-        res.json({ message: "Error While Decoding Token." });
+        res.status(500).send("Error While Decoding Token.");
       } else {
         User.findOne({ sid: decodedUser.sid })
           .exec()
           .then(function(user) {
             if (user === null) {
-              res.json({
-                message: "User Corresponding To Token Does Not Exist"
-              });
+              res
+                .status(500)
+                .send("User Corresponding To Token Does Not Exist");
             } else if (user.hasVoted) {
-              res.json({ message: "User Has Already Voted" });
+              res.status(500).send("User Has Already Voted");
             } else next();
           })
           .catch(function(err) {
             console.log(err);
-            res.json({ message: "Error Querying Decoded User Info." });
+            res.status(500).send("Error Querying Decoded User Info.");
           });
       }
     });
@@ -44,7 +44,7 @@ exports.submitVote = (req, res) => {
         prefs: vote.prefs
       }).catch(function(err) {
         console.log("Vote Submission Failed.");
-        res.json({ message: "Failed To Submit Vote." });
+        res.status(500).send("Failed To Submit Vote.");
       })
     );
   }
@@ -52,11 +52,11 @@ exports.submitVote = (req, res) => {
     User.updateOne({ sid: req.body.sid }, { hasVoted: true })
       .then(function() {
         console.log("Voting Complete", req.body.sid);
-        res.json({ message: "Vote Successfully Submitted" });
+        res.status(200).send("Vote Successfully Submitted");
       })
       .catch(function(err) {
         console.log("Failed To Update hasVoted Flag");
-        res.json({ message: "Failed To Complete Vote Submission" });
+        res.status(500).send("Failed To Complete Vote Submission");
       });
   });
 };
