@@ -10,6 +10,7 @@ const committee = require("./routes/committee");
 const login = require("./routes/login");
 const result = require("./routes/result");
 const vote = require("./routes/vote");
+const verifyToken = require("./routes/verifyToken");
 
 // Connect To DB
 mongoose.connect(
@@ -46,6 +47,7 @@ app.use("/committee", committee);
 app.use("/login", login);
 app.use("/result", result);
 app.use("/vote", vote);
+app.use("/verifyToken", verifyToken);
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
