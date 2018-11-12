@@ -21,29 +21,50 @@ exports.isAdmin = (req, res, next) => {
 };
 
 exports.addNewCandidate = (req, res) => {
-  Candidate.create({
+  Committee.findOne({
     comName: req.body.comName,
-    name: req.body.name,
-    sid: req.body.sid,
-    cpi: req.body.cpi
+    batches: req.body.sid.substring(2, 6)
   })
-    .then(function(candidate) {
-      Committee.updateOne(
-        { comName: candidate.comName, batches: candidate.batch },
-        { $push: { candidates: { sid: candidate.sid, name: candidate.name } } }
-      )
-        .then(function() {
-          console.log("New Candidate Successfully Added.");
-          res.status(200).send("New Candidate Successfully Added");
+    .then(function(committee) {
+      if (committee === null) {
+        console.log("Invalid Candidate. Committee Does Not Exist.");
+        res.status(500).send("Invalid Candidate. Committee Does Not Exist.");
+      } else {
+        Candidate.create({
+          comName: req.body.comName,
+          name: req.body.name,
+          sid: req.body.sid,
+          cpi: req.body.cpi
         })
-        .catch(function(err) {
-          console.log(err);
-          res.status(500).send("Database Error. Failed To Update Committee.");
-        });
+          .then(function(candidate) {
+            Committee.updateOne(
+              { comName: candidate.comName, batches: candidate.batch },
+              {
+                $push: {
+                  candidates: { sid: candidate.sid, name: candidate.name }
+                }
+              }
+            )
+              .then(function() {
+                console.log("New Candidate Successfully Added.");
+                res.status(200).send("New Candidate Successfully Added");
+              })
+              .catch(function(err) {
+                console.log(err);
+                res
+                  .status(500)
+                  .send("Database Error. Failed To Update Committee.");
+              });
+          })
+          .catch(function(err) {
+            console.log(err);
+            res.status(500).send("Database Error. Failed To Add Candidate.");
+          });
+      }
     })
     .catch(function(err) {
       console.log(err);
-      res.status(500).send("Database Error. Failed To Add Candidate.");
+      res.status(500).send("Database Error. Failed To Find Committee.");
     });
 };
 

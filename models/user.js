@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const randPass = () =>
   Math.random()
     .toString(36)
-    .substring(2, 12); // Generate random password
+    .substring(2); // Generate random password
 
 const userSchema = new Schema(
   {

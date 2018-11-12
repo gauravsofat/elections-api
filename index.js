@@ -39,6 +39,16 @@ app.use((req, res, next) => {
     "Origin, Accept, X-Requested-With, Content-Type, x-access-token"
   );
   res.set("Cache-Control", "no-cache");
+
+  if ("OPTIONS" === req.method) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, Accept, X-Requested-With, Content-Type, x-access-token"
+    );
+    return res.sendStatus(200).end();
+  }
+
   next();
 });
 
