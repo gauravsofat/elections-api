@@ -2,23 +2,35 @@ const async = require("async");
 const Candidate = require("../models/candidate");
 
 module.exports = async (minCandidateArr, voteList) => {
+  console.log("Tie Resolution 1 :- Checking Cross Preferences...");
   let lastCandidate = await checkCrossPrefs(minCandidateArr, voteList);
-  if (lastCandidate == null)
+  if (lastCandidate == null) {
+    console.log("Tie Resolution 2 :- Checking Seniority...");
     lastCandidate = await checkSeniority(minCandidateArr);
-  if (lastCandidate == null) lastCandidate = await checkCpi(minCandidateArr);
-  if (lastCandidate == null)
+  }
+  if (lastCandidate == null) {
+    console.log("Tie Resolution 3 :- Checking CPI...");
+    lastCandidate = await checkCpi(minCandidateArr);
+  }
+  if (lastCandidate == null) {
+    console.log("Tie Resolution 4 :- Elimination By Random Selection...");
     lastCandidate = await randomSelection(minCandidateArr);
+  }
+  console.log("Tie Resolved!");
   return lastCandidate;
 };
 
 async function checkCrossPrefs(minCandidateArr, voteList) {
-  console.log("Checking Cross Preferences...");
   let voteCount = await createVoteCount(minCandidateArr);
   voteCount = await getVoteCount(voteCount, voteList);
   const minVoteCount = Math.min(...Object.values(voteCount));
   const minVoteCandidates = await geMinVoteCandidates(voteCount, minVoteCount);
-  if (minVoteCandidates.length == 1) return minVoteCandidates[0];
-  else return null;
+  if (minVoteCandidates.length == 1) {
+    return minVoteCandidates[0];
+  } else {
+    console.log("Tie Situation Persists...");
+    return null;
+  }
 }
 
 async function createVoteCount(minCandidateArr) {
@@ -78,11 +90,11 @@ async function checkSeniority(minCandidateArr) {
   let lastCandidate = await checkSeniorityByYear(minCandidateArr);
   if (lastCandidate == null)
     lastCandidate = await checkSeniorityByBatch(minCandidateArr);
+  if (lastCandidate == null) console.log("Tie Situation Persists...");
   return lastCandidate;
 }
 
 async function checkSeniorityByYear(minCandidateArr) {
-  console.log("Checking Seniority By Year...");
   const yearObj = await getYearObj(minCandidateArr);
   const maxYear = Math.max(...Object.values(yearObj));
   const maxYearCandidates = await getMaxYearCandidates(yearObj, maxYear);

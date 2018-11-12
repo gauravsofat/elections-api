@@ -26,7 +26,18 @@ exports.evaluateResult = (req, res) => {
   Committee.find()
     .exec()
     .then(async function(comList) {
+      console.log("\n");
+      console.log("*".repeat(45));
+      console.log("*".repeat(45));
+      console.log("Results");
+      console.log("\n");
+
       const allResults = await getAllResults(comList);
+
+      console.log("*".repeat(45));
+      console.log("*".repeat(45));
+      console.log("Results Successfully Evaluated");
+
       res.json({ message: "Result Successfully Evaluated.", allResults });
     })
     .catch(function(err) {
@@ -58,6 +69,12 @@ async function getCommitteeResults(committee) {
     voteCount = await createVoteCount(committee);
     voteCount = await getVoteCount(voteCount, voteList);
 
+    console.log("*".repeat(25));
+    console.log("Committee Name: ", committeeResult.comName);
+    console.log("Participating Batches: ", committeeResult.batches);
+    console.log("Number Of Positions: ", numOfSeats);
+    console.log("\n");
+
     async.whilst(
       function() {
         return activeCandidates > numOfSeats;
@@ -66,7 +83,8 @@ async function getCommitteeResults(committee) {
         return new Promise(async resolve => {
           console.log(voteCount);
           lastCandidate = await getLastCandidate(voteCount, voteList);
-          console.log(lastCandidate);
+          console.log("Eliminated Candidate: ", lastCandidate);
+          console.log("\n");
           delete voteCount[lastCandidate];
           activeCandidates--;
           voteList = await updateVoteList(voteCount, voteList);
@@ -80,6 +98,9 @@ async function getCommitteeResults(committee) {
         console.log(voteCount);
         committeeResult.candidates = committee.candidates;
         committeeResult.winners = Object.keys(voteCount);
+        console.log("Elected Candidates: ", committeeResult.winners);
+        console.log("*".repeat(25));
+        console.log("\n");
         resolve(committeeResult);
       }
     );
@@ -131,6 +152,7 @@ async function getLastCandidate(voteCount, voteList) {
     const minCandidateArr = await getMinCandidateArr(voteCount);
     if (minCandidateArr.length == 1) resolve(minCandidateArr[0]);
     else {
+      console.log("Tie Situation");
       const lastCandidate = await resolveTie(minCandidateArr, voteList);
       resolve(lastCandidate);
     }
