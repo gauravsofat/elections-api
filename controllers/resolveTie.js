@@ -2,7 +2,6 @@ const async = require("async");
 const Candidate = require("../models/candidate");
 
 module.exports = async (minCandidateArr, voteList) => {
-  console.log("Tie Resolution 1 :- Checking Cross Preferences...");
   let lastCandidate = await checkCrossPrefs(minCandidateArr, voteList);
   if (lastCandidate == null) {
     console.log("Tie Resolution 2 :- Checking Seniority...");
@@ -21,12 +20,18 @@ module.exports = async (minCandidateArr, voteList) => {
 };
 
 async function checkCrossPrefs(minCandidateArr, voteList) {
+  console.log("Tie Resolution 1 :- Checking Cross Preferences...");
+  console.log("Tie Between: ", minCandidateArr);
   let voteCount = await createVoteCount(minCandidateArr);
   voteCount = await getVoteCount(voteCount, voteList);
   const minVoteCount = Math.min(...Object.values(voteCount));
   const minVoteCandidates = await geMinVoteCandidates(voteCount, minVoteCount);
+  // console.log("Required Length :", minVoteCandidates.length);
   if (minVoteCandidates.length == 1) {
     return minVoteCandidates[0];
+  } else if (minVoteCandidates.length < minCandidateArr.length) {
+    console.log("Tie Situation Persists...");
+    return checkCrossPrefs(minVoteCandidates, voteList);
   } else {
     console.log("Tie Situation Persists...");
     return null;
