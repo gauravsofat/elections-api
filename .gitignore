@@ -71,3 +71,7 @@ typings/
 
 # Serverless directories
 .serverless
+
+# local sysetem files
+.DS_Store
+dbSetup.js
