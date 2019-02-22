@@ -12,7 +12,8 @@
     "helmet": "^3.13.0",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.12",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "xlsx": "^0.14.1"
   },
   "scripts": {
     "start": "node index.js",

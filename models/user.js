@@ -9,6 +9,7 @@ const randPass = () =>
 const userSchema = new Schema(
   {
     sid: String, // Unique Student ID
+    name: String, // Student Name
     pwd: { type: String, default: randPass }, // Password
     floor: { type: String, default: "NA" }, // String to denote the floor a voter resides on
     hasVoted: { type: Boolean, default: false } // Flag to store if vote is yet to be casted
