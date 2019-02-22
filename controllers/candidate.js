@@ -79,3 +79,14 @@ exports.getCandidateList = (req, res) => {
       res.status(500).send("Database Error. Could Not Obtain Candidate List");
     });
 };
+
+exports.deleteCandidate = (req, res) => {
+  Candidate.findOneAndDelete({ sid: req.body.sid }, (err, delCand) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Error in deleting candidate.");
+    }
+    console.log("Successfully deleted Candidate " + delCand.sid);
+    res.json({ message: "Successfully deleted Candidate " + delCand.sid });
+  });
+};
