@@ -1,6 +1,7 @@
 // Import Dependencies
+const cors = require("cors");
 const express = require("express");
-const morgan = require("express");
+const morgan = require("morgan");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -13,10 +14,7 @@ const vote = require("./routes/vote");
 const verifyToken = require("./routes/verifyToken");
 
 // Connect To DB
-mongoose.connect(
-  process.env.DB_HOST,
-  { useNewUrlParser: true }
-);
+mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
 mongoose.set("debug", true);
 const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
@@ -29,28 +27,7 @@ app.use(helmet()); // Sanitize Data
 app.use(morgan("tiny")); // Custom Request Logging
 app.use(express.json()); // JSON Payload Parser
 
-// Response Headers To Allow CORS
-app.use((req, res, next) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Credentials", "true");
-  res.set("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-  res.set(
-    "Access-Control-Allow-Headers",
-    "Origin, Accept, X-Requested-With, Content-Type, x-access-token"
-  );
-  res.set("Cache-Control", "no-cache");
-
-  if ("OPTIONS" === req.method) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, Accept, X-Requested-With, Content-Type, x-access-token"
-    );
-    return res.sendStatus(200).end();
-  }
-
-  next();
-});
+app.use(cors());
 
 app.use("/candidate", candidate);
 app.use("/committee", committee);
