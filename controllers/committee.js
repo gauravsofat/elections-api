@@ -1,5 +1,7 @@
+const async = require("async");
 const jwt = require("jsonwebtoken");
 const Committee = require("../models/committee");
+const Candidate = require("../models/candidate");
 
 exports.isAdmin = (req, res, next) => {
   const token = req.headers["x-access-token"];
@@ -45,4 +47,42 @@ exports.addNewCommittee = (req, res) => {
       console.log(err);
       res.status(500).send("Database Error. Failed To Create Committee.");
     });
+};
+
+exports.deleteCommittee = (req, res) => {
+  Committee.findOneAndDelete(
+    { comName: req.body.comName, batches: req.body.batches },
+    (err, delCom) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Database Error. Failed to delete committee.");
+      }
+      async.each(
+        delCom.candidates,
+        (item, cb) => {
+          Candidate.findOneAndDelete({ sid: item.sid }, err => {
+            if (err) {
+              console.log(err);
+              res
+                .status(500)
+                .send(
+                  "Database Error. Failed to delete candidate in committee."
+                );
+            }
+            cb();
+          });
+        },
+        err => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Database Error. Failed to delete committee.");
+          }
+          res.json({
+            message: "Deleted Committee" + delCom.comName,
+            delCand: delCom.candidates
+          });
+        }
+      );
+    }
+  );
 };
