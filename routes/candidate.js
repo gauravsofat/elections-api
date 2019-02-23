@@ -5,6 +5,6 @@ const router = express.Router();
 if (process.env.NODE_ENV !== "dev") router.use(candidateController.isAdmin);
 router.post("/", candidateController.addNewCandidate);
 router.get("/", candidateController.getCandidateList);
-router.delete("/", candidateController.deleteCandidate);
+router.delete("/:candId", candidateController.deleteCandidate);
 
 module.exports = router;

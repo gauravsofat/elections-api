@@ -81,7 +81,8 @@ exports.getCandidateList = (req, res) => {
 };
 
 exports.deleteCandidate = (req, res) => {
-  Candidate.findOneAndDelete({ sid: req.body.sid }, (err, delCand) => {
+  console.log(req.params);
+  Candidate.findByIdAndDelete(req.params.candId, (err, delCand) => {
     if (err) {
       console.log(err);
       res.status(500).send("Error in deleting candidate.");
