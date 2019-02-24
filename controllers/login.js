@@ -31,7 +31,9 @@ exports.authLogin = (req, res) => {
               list: comList,
               token,
               admin: user.sid === process.env.ADMIN_ID,
-              message: "Successful Login"
+              message: "Successful Login",
+              name: user.name,
+              sid: user.sid
             });
           });
       }
