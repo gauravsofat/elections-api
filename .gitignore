@@ -74,4 +74,4 @@ typings/
 
 # local sysetem files
 .DS_Store
-populateDb.*
+populateDb.xlsx
