@@ -88,6 +88,18 @@ exports.deleteCandidate = (req, res) => {
       res.status(500).send("Error in deleting candidate.");
     }
     console.log("Successfully deleted Candidate " + delCand.sid);
-    res.json({ message: "Successfully deleted Candidate " + delCand.sid });
+    Committee.findOneAndUpdate(
+      { comName: delCand.comName },
+      { $pull: { candidates: { sid: delCand.sid } } },
+      err => {
+        if (err) {
+          console.log(err);
+          res
+            .status(500)
+            .send("Error in deleting candidate from respective committee");
+        }
+        res.status(200).send("Successfully Deleted Candidate.");
+      }
+    );
   });
 };

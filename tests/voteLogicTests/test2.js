@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const User = require("../models/user");
-const Committee = require("../models/committee");
-const Candidate = require("../models/candidate");
-const Vote = require("../models/vote");
+const User = require("../../models/user");
+const Committee = require("../../models/committee");
+const Candidate = require("../../models/candidate");
+const Vote = require("../../models/vote");
 
 // Connect To DB
-mongoose.connect(
-  process.env.DB_HOST,
-  { useNewUrlParser: true }
-);
+mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
 mongoose.set("debug", true);
 const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
@@ -40,7 +37,7 @@ com3 = {
   comName: "com3",
   seats: 1,
   batches: ["1601"],
-  candidates: [{ sid: "201601002", name: "D" }, { sid: "201601008", name: "F" }]
+  candidates: [{ sid: "201601002", name: "E" }, { sid: "201601008", name: "F" }]
 };
 
 candidateA = {

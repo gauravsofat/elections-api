@@ -73,10 +73,7 @@ exports.deleteCommittee = (req, res) => {
           console.log(err);
           res.status(500).send("Database Error. Failed to delete committee.");
         }
-        res.json({
-          message: "Deleted Committee " + delCom.comName,
-          delCand: delCom.candidates
-        });
+        res.status(200).send("Successfully Deleted Committee.");
       }
     );
   });
