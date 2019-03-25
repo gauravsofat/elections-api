@@ -52,7 +52,7 @@ exports.getStats = (req, res) => {
       console.log(err);
       res.status(500).send("Failed to get voting stats.");
     }
-    User.countDocuments({ hasVoted: false }, (err, votedCnt) => {
+    User.countDocuments({ hasVoted: true }, (err, votedCnt) => {
       if (err) {
         console.log(err);
         res.status(500).send("Failed to get voting stats.");
