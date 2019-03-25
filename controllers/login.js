@@ -14,7 +14,10 @@ exports.authLogin = (req, res) => {
         res.status(500).send("User Has Already Voted");
       } else {
         Committee.find()
-          .or({ batches: user.batch }, { comName: user.floor })
+          .or([
+            { $and: [{ batches: user.batch }, { isHmc: false }] },
+            { $and: [{ comName: user.floor }, { isHmc: true }] }
+          ])
           .exec()
           .then(function(comList) {
             console.log("Successful Login: ", user.sid);
