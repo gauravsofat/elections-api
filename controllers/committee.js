@@ -37,7 +37,8 @@ exports.addNewCommittee = (req, res) => {
   Committee.create({
     comName: req.body.comName,
     batches: req.body.batches,
-    seats: req.body.seats
+    seats: req.body.seats,
+    isHmc: req.body.isHmc
   })
     .then(function() {
       console.log("New Committee Created");
