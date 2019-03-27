@@ -2,6 +2,7 @@ const async = require("async");
 const Candidate = require("../models/candidate");
 
 module.exports = async (minCandidateArr, voteList) => {
+  console.log("MinCandidateArr", minCandidateArr);
   let lastCandidate = await checkCrossPrefs(minCandidateArr, voteList);
   if (lastCandidate == null) {
     console.log("Tie Resolution 2 :- Checking Seniority...");
@@ -26,7 +27,6 @@ async function checkCrossPrefs(minCandidateArr, voteList) {
   voteCount = await getVoteCount(voteCount, voteList);
   const minVoteCount = Math.min(...Object.values(voteCount));
   const minVoteCandidates = await geMinVoteCandidates(voteCount, minVoteCount);
-  // console.log("Required Length :", minVoteCandidates.length);
   if (minVoteCandidates.length == 1) {
     return minVoteCandidates[0];
   } else if (minVoteCandidates.length < minCandidateArr.length) {
@@ -92,99 +92,32 @@ async function geMinVoteCandidates(voteCount, minVoteCount) {
 }
 
 async function checkSeniority(minCandidateArr) {
-  let lastCandidate = await checkSeniorityByYear(minCandidateArr);
-  if (lastCandidate == null)
-    lastCandidate = await checkSeniorityByBatch(minCandidateArr);
-  if (lastCandidate == null) console.log("Tie Situation Persists...");
-  return lastCandidate;
-}
-
-async function checkSeniorityByYear(minCandidateArr) {
-  const yearObj = await getYearObj(minCandidateArr);
-  const maxYear = Math.max(...Object.values(yearObj));
-  const maxYearCandidates = await getMaxYearCandidates(yearObj, maxYear);
-  if (maxYearCandidates.length == 1) return maxYearCandidates[0];
-  else return null;
-}
-
-async function getYearObj(minCandidateArr) {
+  console.log("Checking Seniority...");
   return new Promise(resolve => {
-    let yearObj = {};
-    async.each(
+    minYr = 100;
+    async.transform(
       minCandidateArr,
-      function(candidateSid, cb) {
-        Candidate.findOne({ sid: candidateSid })
-          .exec()
-          .then(function(queryResult) {
-            yearObj[queryResult.sid] = Number(
-              queryResult.batch.substring(0, 2)
-            );
-            cb();
-          });
+      (acc, it, ind, cb) => {
+        candYr = Number(it.substring(2, 4));
+        minYr = Math.min(minYr, candYr);
+        acc.push({ sid: it, year: candYr });
+        cb(null);
       },
-      function(err) {
-        if (err) throw err;
-        resolve(yearObj);
-      }
-    );
-  });
-}
-
-async function getMaxYearCandidates(yearObj, minYear) {
-  return new Promise(resolve => {
-    async.filter(
-      Object.keys(yearObj),
-      function(candidate, cb) {
-        cb(null, yearObj[candidate] == minYear);
-      },
-      function(err, minYearCandidates) {
-        if (err) throw err;
-        resolve(minYearCandidates);
-      }
-    );
-  });
-}
-
-async function checkSeniorityByBatch(minCandidateArr) {
-  console.log("Checking Seniority By Batch...");
-  const batchObj = await getBatchObj(minCandidateArr);
-  const minBatch = Math.min(...Object.values(batchObj));
-  const minBatchCandidates = await getMinBatchCandidates(batchObj, minBatch);
-  if (minBatchCandidates.length == 1) return minBatchCandidates[0];
-  else return null;
-}
-
-async function getBatchObj(minCandidateArr) {
-  return new Promise(resolve => {
-    let batchObj = {};
-    async.each(
-      minCandidateArr,
-      function(candidate, cb) {
-        Candidate.findOne({ sid: candidate })
-          .exec()
-          .then(function(doc) {
-            batchObj[doc.sid] = Number(doc.batch.substring(2, 4));
-            cb();
-          });
-      },
-      function(err) {
-        if (err) throw err;
-        resolve(batchObj);
-      }
-    );
-  });
-}
-
-async function getMinBatchCandidates(batchObj, minBatch) {
-  return new Promise(resolve => {
-    async.filter(
-      Object.keys(batchObj),
-      function(candidate, cb) {
-        cb(null, batchObj[candidate] == minBatch);
-      },
-      function(err, minBatchCandidates) {
-        if (err) throw err;
-        resolve(minBatchCandidates);
+      (err, yearObj) => {
+        if (err) console.log("Error During Year-wise Tie Resolution");
+        async.filter(
+          yearObj,
+          (it, cb) => cb(null, it.year !== minYr),
+          (err, res) => {
+            if (err) console.log(err);
+            // console.log("res", res);
+            if (res.length == 1) resolve(res[0].sid);
+            else {
+              console.log("Tie Situation Persists...");
+              resolve(null);
+            }
+          }
+        );
       }
     );
   });
@@ -192,44 +125,36 @@ async function getMinBatchCandidates(batchObj, minBatch) {
 
 async function checkCpi(minCandidateArr) {
   console.log("Checking CPI...");
-  const cpiObj = await getCpiObj(minCandidateArr);
-  const minCpi = Math.min(...Object.values(cpiObj));
-  const minCpiCandidates = await getMinCpiCandidates(cpiObj, minCpi);
-  if (minCpiCandidates.length == 1) return minCpiCandidates[0];
-  return null;
-}
-
-async function getCpiObj(minCandidateArr) {
+  // const cpiObj = await getCpiObj(minCandidateArr);
+  // const minCpi = Math.min(...Object.values(cpiObj));
+  // const minCpiCandidates = await getMinCpiCandidates(cpiObj, minCpi);
+  // if (minCpiCandidates.length == 1) return minCpiCandidates[0];
+  // return null;
   return new Promise(resolve => {
-    let cpiObj = {};
-    async.each(
+    minCpi = 10;
+    async.transform(
       minCandidateArr,
-      function(candidateSid, cb) {
-        Candidate.findOne({ sid: candidateSid })
-          .exec()
-          .then(function(queryResult) {
-            cpiObj[queryResult.sid] = queryResult.cpi;
-            cb();
-          });
+      (acc, it, ind, cb) => {
+        Candidate.findOne({ sid: it }, (err, doc) => {
+          if (err)
+            console.log("Database Error. Failed to get candidate info.", err);
+          minCpi = Math.min(minCpi, doc.cpi);
+          acc.push({ sid: it, cpi: doc.cpi });
+          cb(null);
+        });
       },
-      function(err) {
-        if (err) throw err;
-        resolve(cpiObj);
-      }
-    );
-  });
-}
-
-async function getMinCpiCandidates(cpiObj, minCpi) {
-  return new Promise(resolve => {
-    async.filter(
-      Object.keys(cpiObj),
-      function(candidate, cb) {
-        cb(null, cpiObj[candidate] == minCpi);
-      },
-      function(err, minCpiCandidates) {
-        if (err) throw err;
-        resolve(minCpiCandidates);
+      (err, cpiObj) => {
+        if (err) console.log("Error During CPI-based Tie Resolution");
+        async.filter(
+          cpiObj,
+          (it, cb) => cb(null, it.cpi !== minCpi),
+          (err, res) => {
+            if (err) console.log(err);
+            // console.log("res", res);
+            if (res.length == 1) resolve(res[0].sid);
+            else resolve(null);
+          }
+        );
       }
     );
   });
