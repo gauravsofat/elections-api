@@ -92,7 +92,6 @@ async function geMinVoteCandidates(voteCount, minVoteCount) {
 }
 
 async function checkSeniority(minCandidateArr) {
-  console.log("Checking Seniority...");
   return new Promise(resolve => {
     minYr = 100;
     async.transform(
@@ -124,12 +123,6 @@ async function checkSeniority(minCandidateArr) {
 }
 
 async function checkCpi(minCandidateArr) {
-  console.log("Checking CPI...");
-  // const cpiObj = await getCpiObj(minCandidateArr);
-  // const minCpi = Math.min(...Object.values(cpiObj));
-  // const minCpiCandidates = await getMinCpiCandidates(cpiObj, minCpi);
-  // if (minCpiCandidates.length == 1) return minCpiCandidates[0];
-  // return null;
   return new Promise(resolve => {
     minCpi = 10;
     async.transform(

@@ -4,7 +4,7 @@ const Vote = require("../models/vote");
 
 module.exports = async comList => {
   return new Promise(resolve => {
-    async.map(comList, getCommitteeResults, function(err, allResults) {
+    async.mapSeries(comList, getCommitteeResults, function(err, allResults) {
       if (err) throw err;
       resolve(allResults);
     });
