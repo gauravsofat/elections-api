@@ -58,11 +58,43 @@ exports.getStats = (req, res) => {
         res.status(500).send("Failed to get voting stats.");
       }
       console.log(totalCnt);
-      res.json({
-        message: "Voting stats obtained.",
-        totalCnt,
-        votedCnt
-      });
+
+      User.aggregate(
+        [
+          { $match: { hasVoted: true } },
+          {
+            $group: {
+              _id: { $substrBytes: ["$sid", 2, 4] },
+              count: { $sum: 1 }
+            }
+          }
+        ],
+        (err, resVoted) => {
+          if (err) console.log(err);
+          else console.log(resVoted);
+          User.aggregate(
+            [
+              {
+                $group: {
+                  _id: { $substrBytes: ["$sid", 2, 4] },
+                  count: { $sum: 1 }
+                }
+              }
+            ],
+            (err, resTotal) => {
+              if (err) console.log(err);
+              else console.log(resTotal);
+              res.json({
+                message: "Voting stats obtained.",
+                totalCnt,
+                votedCnt,
+                resVoted,
+                resTotal
+              });
+            }
+          );
+        }
+      );
     });
   });
 };
