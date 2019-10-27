@@ -7,19 +7,20 @@
   "dependencies": {
     "async": "^2.6.1",
     "cors": "^2.8.5",
-    "dotenv": "^6.0.0",
+    "dotenv": "^8.2.0",
     "express": "^4.16.3",
     "helmet": "^3.13.0",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.0",
-    "xlsx": "^0.14.1"
+    "xlsx": "^0.15.1"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "NODE_ENV=dev nodemon index.js"
+    "dev": "cross-env NODE_ENV=dev nodemon index.js",
+    "start": "node index.js"
   },
   "devDependencies": {
+    "cross-env": "^6.0.3",
     "nodemon": "^1.18.6"
   }
 }

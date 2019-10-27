@@ -7,7 +7,10 @@ const Candidate = require("../../models/candidate");
 const Vote = require("../../models/vote");
 
 // Connect To DB
-mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
+mongoose.connect(process.env.DB_HOST, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 mongoose.set("debug", true);
 const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
