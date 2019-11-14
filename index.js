@@ -3,7 +3,7 @@ const cors = require("cors");
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const mongoose = require("mongoose");
+const db = require("./config/database");
 require("dotenv").config();
 
 const candidate = require("./routes/candidate");
@@ -14,12 +14,11 @@ const vote = require("./routes/vote");
 const verifyToken = require("./routes/verifyToken");
 
 // Connect To DB
-mongoose.connect(process.env.DB_HOST, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-mongoose.set("debug", true);
-const db = mongoose.connection;
+// mongoose.connect(process.env.DB_HOST, {
+//   useNewUrlParser: true
+// });
+// mongoose.set("debug", true);
+// const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
 db.on("connected", () => {
   console.log("Connected To DB!");

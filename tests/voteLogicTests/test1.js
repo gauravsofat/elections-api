@@ -1,18 +1,9 @@
-const mongoose = require("mongoose");
-require("dotenv").config();
-
-const User = require("../../models/user");
+const db = require("../../config/database");
 const Committee = require("../../models/committee");
 const Candidate = require("../../models/candidate");
 const Vote = require("../../models/vote");
 
 // Connect To DB
-mongoose.connect(process.env.DB_HOST, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-mongoose.set("debug", true);
-const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
 db.once("open", () => {
   console.log("Connected To DB!");
@@ -26,7 +17,10 @@ com1 = {
   comName: "com1",
   seats: 1,
   batches: ["1601"],
-  candidates: [{ sid: "201601006", name: "A" }, { sid: "201601004", name: "B" }]
+  candidates: [
+    { sid: "201601006", name: "A" },
+    { sid: "201601004", name: "B" }
+  ]
 };
 
 candidateA = {

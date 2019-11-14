@@ -2,7 +2,7 @@
 // The input file to this script - populatedb.xlsx
 
 // Import dependencies
-const mongoose = require("mongoose");
+const db = require("../../config/database");
 const async = require("async");
 const XLSX = require("xlsx");
 require("dotenv").config();
@@ -14,9 +14,6 @@ const Candidate = require("../models/candidate");
 const Vote = require("../models/vote");
 
 // Connect To DB
-mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
-mongoose.set("debug", true);
-const db = mongoose.connection;
 db.on("error", console.log.bind(console, "MongoDB Error:"));
 db.on("connected", () => {
   console.log("Connected To DB!");
