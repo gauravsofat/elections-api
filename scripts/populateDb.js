@@ -2,7 +2,7 @@
 // The input file to this script - populatedb.xlsx
 
 // Import dependencies
-const db = require("../../config/database");
+const db = require("../config/database");
 const async = require("async");
 const XLSX = require("xlsx");
 require("dotenv").config();

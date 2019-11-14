@@ -1,5 +1,5 @@
-const db = require("../../config/database");
-
+const db = require("../config/database");
+const mongoose = require("mongoose");
 // Import DB Models
 const User = require("../models/user");
 const Committee = require("../models/committee");
