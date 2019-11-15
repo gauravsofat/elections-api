@@ -11,10 +11,10 @@ API for the DA-IICT Elections built with NodeJS.
 - You need to setup a .env file in the root of the directory of the following structure (You will need a mongoDB database hosted locally or elsewhere):
 
   ```bash
-  PORT = # Optional (Default is 5000)
-  DB_HOST = # Specify your mongoDB url
-  ADMIN_ID = "201601000" # You can change this to any id you like
-  LOGIN_SECRET = # Any random string
+  PORT=#Optional (Default is 5000)
+  DB_HOST=#Specify your mongoDB url
+  ADMIN_ID="201601000" #The Admin ID to login into the admin panel
+  LOGIN_SECRET=#Any random string
   ```
 
 - Run the following to install dependencies:
