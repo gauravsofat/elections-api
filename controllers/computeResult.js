@@ -1,6 +1,6 @@
-const async = require("async");
-const resolveTie = require("./resolveTie");
-const Vote = require("../models/vote");
+const async = require('async');
+const resolveTie = require('./resolveTie');
+const Vote = require('../models/vote');
 
 module.exports = async comList => {
   return new Promise(resolve => {
@@ -17,19 +17,19 @@ async function getCommitteeResults(committee) {
     committeeResult.comName = committee.comName;
     committeeResult.batches = committee.batches;
 
-    voteList = await getVoteList(committee);
+    let voteList = await getVoteList(committee);
 
     const numOfSeats = committee.seats;
     let activeCandidates = committee.candidates.length;
 
-    voteCount = await createVoteCount(committee);
+    let voteCount = await createVoteCount(committee);
     voteCount = await getVoteCount(voteCount, voteList);
 
-    console.log("*".repeat(25));
-    console.log("Committee Name: ", committeeResult.comName);
-    console.log("Participating Batches: ", committeeResult.batches);
-    console.log("Number Of Positions: ", numOfSeats);
-    console.log("\n");
+    console.log('*'.repeat(25));
+    console.log('Committee Name: ', committeeResult.comName);
+    console.log('Participating Batches: ', committeeResult.batches);
+    console.log('Number Of Positions: ', numOfSeats);
+    console.log('\n');
 
     async.whilst(
       function() {
@@ -38,9 +38,9 @@ async function getCommitteeResults(committee) {
       async function() {
         return new Promise(async resolve => {
           console.log(voteCount);
-          lastCandidate = await getLastCandidate(voteCount, voteList);
-          console.log("Eliminated Candidate: ", lastCandidate);
-          console.log("\n");
+          const lastCandidate = await getLastCandidate(voteCount, voteList);
+          console.log('Eliminated Candidate: ', lastCandidate);
+          console.log('\n');
           delete voteCount[lastCandidate];
           activeCandidates--;
           voteList = await updateVoteList(voteCount, voteList);
@@ -54,9 +54,9 @@ async function getCommitteeResults(committee) {
         console.log(voteCount);
         committeeResult.candidates = committee.candidates;
         committeeResult.winners = Object.keys(voteCount);
-        console.log("Elected Candidates: ", committeeResult.winners);
-        console.log("*".repeat(25));
-        console.log("\n");
+        console.log('Elected Candidates: ', committeeResult.winners);
+        console.log('*'.repeat(25));
+        console.log('\n');
         resolve(committeeResult);
       }
     );
@@ -72,7 +72,8 @@ async function getVoteList(committee) {
       })
       .catch(function(err) {
         console.log(err);
-        res.status(500).send("Database Error. Failed To Obtain Vote List.");
+        // eslint-disable-next-line no-undef
+        res.status(500).send('Database Error. Failed To Obtain Vote List.');
       });
   });
 }
@@ -108,7 +109,7 @@ async function getLastCandidate(voteCount, voteList) {
     const minCandidateArr = await getMinCandidateArr(voteCount);
     if (minCandidateArr.length == 1) resolve(minCandidateArr[0]);
     else {
-      console.log("Tie Situation");
+      console.log('Tie Situation');
       const lastCandidate = await resolveTie(minCandidateArr, voteList);
       resolve(lastCandidate);
     }

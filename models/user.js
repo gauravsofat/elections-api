@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const randPass = () =>
@@ -11,14 +11,14 @@ const userSchema = new Schema(
     sid: String, // Unique Student ID
     name: String, // Student Name
     pwd: { type: String, default: randPass }, // Password
-    floor: { type: String, default: "NA" }, // String to denote the floor a voter resides on
-    hasVoted: { type: Boolean, default: false } // Flag to store if vote is yet to be casted
+    floor: { type: String, default: 'NA' }, // String to denote the floor a voter resides on
+    hasVoted: { type: Boolean, default: false }, // Flag to store if vote is yet to be casted
   },
-  { collection: "users" }
+  { collection: 'users' }
 );
 
-userSchema.virtual("batch").get(function() {
+userSchema.virtual('batch').get(function() {
   return Number(this.sid.toString().substring(2, 6));
 });
 
-module.exports = mongoose.model("User", userSchema); // Export model
+module.exports = mongoose.model('User', userSchema); // Export model

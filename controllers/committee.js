@@ -1,21 +1,21 @@
-const async = require("async");
-const jwt = require("jsonwebtoken");
-const Committee = require("../models/committee");
-const Candidate = require("../models/candidate");
+const async = require('async');
+const jwt = require('jsonwebtoken');
+const Committee = require('../models/committee');
+const Candidate = require('../models/candidate');
 
 exports.isAdmin = (req, res, next) => {
-  const token = req.headers["x-access-token"];
+  const token = req.headers['x-access-token'];
   if (!token) {
-    console.log("Missing Token");
-    res.status(500).send("Token Not Provided.");
+    console.log('Missing Token');
+    res.status(500).send('Token Not Provided.');
   } else {
     jwt.verify(token, process.env.LOGIN_SECRET, function(err, decoded) {
       if (err) {
-        console.log("Error Decoding Token.");
-        res.status(500).send("Error Decoding Token.");
+        console.log('Error Decoding Token.');
+        res.status(500).send('Error Decoding Token.');
       } else if (decoded.sid !== process.env.ADMIN_ID) {
-        console.log("User Does Not Have Admin Rights");
-        res.status(500).send("User Does Not Have Admin Rights");
+        console.log('User Does Not Have Admin Rights');
+        res.status(500).send('User Does Not Have Admin Rights');
       } else next();
     });
   }
@@ -29,7 +29,7 @@ exports.getCommitteeList = (req, res) => {
     })
     .catch(function(err) {
       console.log(err);
-      res.status(500).send("Database Error. Could Not Obtain Committee List");
+      res.status(500).send('Database Error. Could Not Obtain Committee List');
     });
 };
 
@@ -38,15 +38,15 @@ exports.addNewCommittee = (req, res) => {
     comName: req.body.comName,
     batches: req.body.batches,
     seats: req.body.seats,
-    isHmc: req.body.isHmc
+    isHmc: req.body.isHmc,
   })
     .then(function() {
-      console.log("New Committee Created");
-      res.status(200).send("New Committee Successfully Added");
+      console.log('New Committee Created');
+      res.status(200).send('New Committee Successfully Added');
     })
     .catch(function(err) {
       console.log(err);
-      res.status(500).send("Database Error. Failed To Create Committee.");
+      res.status(500).send('Database Error. Failed To Create Committee.');
     });
 };
 
@@ -54,7 +54,7 @@ exports.deleteCommittee = (req, res) => {
   Committee.findByIdAndDelete(req.params.comId, (err, delCom) => {
     if (err) {
       console.log(err);
-      res.status(500).send("Database Error. Failed to delete committee.");
+      res.status(500).send('Database Error. Failed to delete committee.');
     }
     async.each(
       delCom.candidates,
@@ -64,7 +64,7 @@ exports.deleteCommittee = (req, res) => {
             console.log(err);
             res
               .status(500)
-              .send("Database Error. Failed to delete candidate in committee.");
+              .send('Database Error. Failed to delete candidate in committee.');
           }
           cb();
         });
@@ -72,9 +72,9 @@ exports.deleteCommittee = (req, res) => {
       err => {
         if (err) {
           console.log(err);
-          res.status(500).send("Database Error. Failed to delete committee.");
+          res.status(500).send('Database Error. Failed to delete committee.');
         }
-        res.status(200).send("Successfully Deleted Committee.");
+        res.status(200).send('Successfully Deleted Committee.');
       }
     );
   });

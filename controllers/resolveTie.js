@@ -1,28 +1,28 @@
-const async = require("async");
-const Candidate = require("../models/candidate");
+const async = require('async');
+const Candidate = require('../models/candidate');
 
 module.exports = async (minCandidateArr, voteList) => {
-  console.log("MinCandidateArr", minCandidateArr);
+  console.log('MinCandidateArr', minCandidateArr);
   let lastCandidate = await checkCrossPrefs(minCandidateArr, voteList);
   if (lastCandidate == null) {
-    console.log("Tie Resolution 2 :- Checking Seniority...");
+    console.log('Tie Resolution 2 :- Checking Seniority...');
     lastCandidate = await checkSeniority(minCandidateArr);
   }
   if (lastCandidate == null) {
-    console.log("Tie Resolution 3 :- Checking CPI...");
+    console.log('Tie Resolution 3 :- Checking CPI...');
     lastCandidate = await checkCpi(minCandidateArr);
   }
   if (lastCandidate == null) {
-    console.log("Tie Resolution 4 :- Elimination By Random Selection...");
+    console.log('Tie Resolution 4 :- Elimination By Random Selection...');
     lastCandidate = await randomSelection(minCandidateArr);
   }
-  console.log("Tie Resolved!");
+  console.log('Tie Resolved!');
   return lastCandidate;
 };
 
 async function checkCrossPrefs(minCandidateArr, voteList) {
-  console.log("Tie Resolution 1 :- Checking Cross Preferences...");
-  console.log("Tie Between: ", minCandidateArr);
+  console.log('Tie Resolution 1 :- Checking Cross Preferences...');
+  console.log('Tie Between: ', minCandidateArr);
   let voteCount = await createVoteCount(minCandidateArr);
   voteCount = await getVoteCount(voteCount, voteList);
   const minVoteCount = Math.min(...Object.values(voteCount));
@@ -30,17 +30,17 @@ async function checkCrossPrefs(minCandidateArr, voteList) {
   if (minVoteCandidates.length == 1) {
     return minVoteCandidates[0];
   } else if (minVoteCandidates.length < minCandidateArr.length) {
-    console.log("Tie Situation Persists...");
+    console.log('Tie Situation Persists...');
     return checkCrossPrefs(minVoteCandidates, voteList);
   } else {
-    console.log("Tie Situation Persists...");
+    console.log('Tie Situation Persists...');
     return null;
   }
 }
 
 async function createVoteCount(minCandidateArr) {
   return new Promise(resolve => {
-    let voteCount = {};
+    const voteCount = {};
     async.each(
       minCandidateArr,
       function(candidateSid, cb) {
@@ -93,17 +93,17 @@ async function geMinVoteCandidates(voteCount, minVoteCount) {
 
 async function checkSeniority(minCandidateArr) {
   return new Promise(resolve => {
-    minYr = 100;
+    let minYr = 100;
     async.transform(
       minCandidateArr,
       (acc, it, ind, cb) => {
-        candYr = Number(it.substring(2, 4));
+        const candYr = Number(it.substring(2, 4));
         minYr = Math.min(minYr, candYr);
         acc.push({ sid: it, year: candYr });
         cb(null);
       },
       (err, yearObj) => {
-        if (err) console.log("Error During Year-wise Tie Resolution");
+        if (err) console.log('Error During Year-wise Tie Resolution');
         async.filter(
           yearObj,
           (it, cb) => cb(null, it.year !== minYr),
@@ -112,7 +112,7 @@ async function checkSeniority(minCandidateArr) {
             // console.log("res", res);
             if (res.length == 1) resolve(res[0].sid);
             else {
-              console.log("Tie Situation Persists...");
+              console.log('Tie Situation Persists...');
               resolve(null);
             }
           }
@@ -124,20 +124,20 @@ async function checkSeniority(minCandidateArr) {
 
 async function checkCpi(minCandidateArr) {
   return new Promise(resolve => {
-    minCpi = 10;
+    let minCpi = 10;
     async.transform(
       minCandidateArr,
       (acc, it, ind, cb) => {
         Candidate.findOne({ sid: it }, (err, doc) => {
           if (err)
-            console.log("Database Error. Failed to get candidate info.", err);
+            console.log('Database Error. Failed to get candidate info.', err);
           minCpi = Math.min(minCpi, doc.cpi);
           acc.push({ sid: it, cpi: doc.cpi });
           cb(null);
         });
       },
       (err, cpiObj) => {
-        if (err) console.log("Error During CPI-based Tie Resolution");
+        if (err) console.log('Error During CPI-based Tie Resolution');
         async.filter(
           cpiObj,
           (it, cb) => cb(null, it.cpi !== minCpi),
@@ -154,6 +154,6 @@ async function checkCpi(minCandidateArr) {
 }
 
 async function randomSelection(minCandidateArr) {
-  console.log("Eliminating Using Random Selection...");
+  console.log('Eliminating Using Random Selection...');
   return minCandidateArr[Math.floor(Math.random() * minCandidateArr.length)];
 }

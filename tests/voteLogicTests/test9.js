@@ -1,85 +1,86 @@
-const Committee = require("../../models/committee");
-const Candidate = require("../../models/candidate");
-const Vote = require("../../models/vote");
+const Committee = require('../../models/committee');
+const Candidate = require('../../models/candidate');
+const Vote = require('../../models/vote');
+const db = require('../../config/database');
 
 // Connect To DB
-db.on("error", console.log.bind(console, "MongoDB Error:"));
-db.once("open", () => {
-  console.log("Connected To DB!");
+db.on('error', console.log.bind(console, 'MongoDB Error:'));
+db.once('open', () => {
+  console.log('Connected To DB!');
 });
 
 Committee.deleteMany().exec();
 Vote.deleteMany().exec();
 Candidate.deleteMany().exec();
 
-com1 = {
-  comName: "com1",
+const com1 = {
+  comName: 'com1',
   seats: 2,
-  batches: ["1601"],
+  batches: ['1601'],
   candidates: [
-    { sid: "201601001", name: "A" },
-    { sid: "201601002", name: "B" },
-    { sid: "201601003", name: "C" }
-  ]
+    { sid: '201601001', name: 'A' },
+    { sid: '201601002', name: 'B' },
+    { sid: '201601003', name: 'C' },
+  ],
 };
 
-candidateA = {
-  sid: "201601001",
-  name: "A",
-  comName: "com1",
-  batch: "1601",
-  cpi: 7.5
+const candidateA = {
+  sid: '201601001',
+  name: 'A',
+  comName: 'com1',
+  batch: '1601',
+  cpi: 7.5,
 };
 
-candidateB = {
-  sid: "201601002",
-  name: "B",
-  comName: "com1",
-  batch: "1601",
-  cpi: 7.5
+const candidateB = {
+  sid: '201601002',
+  name: 'B',
+  comName: 'com1',
+  batch: '1601',
+  cpi: 7.5,
 };
 
-candidateC = {
-  sid: "201601003",
-  name: "B",
-  comName: "com1",
-  batch: "1601",
-  cpi: 7.5
+const candidateC = {
+  sid: '201601003',
+  name: 'B',
+  comName: 'com1',
+  batch: '1601',
+  cpi: 7.5,
 };
 
-voteA = {
-  sid: "201601201",
-  batch: "1601",
-  comName: "com1",
-  prefs: ["201601001"]
+const voteA = {
+  sid: '201601201',
+  batch: '1601',
+  comName: 'com1',
+  prefs: ['201601001'],
 };
 
-voteB = {
-  sid: "201601201",
-  batch: "1601",
-  comName: "com1",
-  prefs: ["201601002"]
+const voteB = {
+  sid: '201601201',
+  batch: '1601',
+  comName: 'com1',
+  prefs: ['201601002'],
 };
 
-voteAB = {
-  sid: "201601201",
-  batch: "1601",
-  comName: "com1",
-  prefs: ["201601001", "201601002"]
+const voteAB = {
+  sid: '201601201',
+  batch: '1601',
+  comName: 'com1',
+  prefs: ['201601001', '201601002'],
 };
 
-voteCA = {
-  sid: "201601201",
-  batch: "1601",
-  comName: "com1",
-  prefs: ["201601003", "201601001"]
+const voteCA = {
+  sid: '201601201',
+  batch: '1601',
+  comName: 'com1',
+  prefs: ['201601003', '201601001'],
 };
 
-voteBC = {
-  sid: "201601201",
-  batch: "1601",
-  comName: "com1",
-  prefs: ["201601002", "201601003"]
+const voteBC = {
+  sid: '201601201',
+  batch: '1601',
+  comName: 'com1',
+  prefs: ['201601002', '201601003'],
 };
 
 Committee.create(com1)
