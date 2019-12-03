@@ -1,22 +1,22 @@
-const computeResult = require("./computeResult");
-const jwt = require("jsonwebtoken");
+const computeResult = require('./computeResult');
+const jwt = require('jsonwebtoken');
 
-const Committee = require("../models/committee");
-const User = require("../models/user");
+const Committee = require('../models/committee');
+const User = require('../models/user');
 
 exports.isAdmin = (req, res, next) => {
-  const token = req.headers["x-access-token"];
+  const token = req.headers['x-access-token'];
   if (!token) {
-    console.log("Missing Token");
-    res.status(500).send("Token Not Provided.");
+    console.log('Missing Token');
+    res.status(500).send('Token Not Provided.');
   } else {
     jwt.verify(token, process.env.LOGIN_SECRET, function(err, decoded) {
       if (err) {
-        console.log("Error Decoding Token.");
-        res.status(500).send("Error Decoding Token.");
+        console.log('Error Decoding Token.');
+        res.status(500).send('Error Decoding Token.');
       } else if (decoded.sid !== process.env.ADMIN_ID) {
-        console.log("User Does Not Have Admin Rights");
-        res.status(500).send("User Does Not Have Admin Rights");
+        console.log('User Does Not Have Admin Rights');
+        res.status(500).send('User Does Not Have Admin Rights');
       } else next();
     });
   }
@@ -26,23 +26,25 @@ exports.evaluateResult = (req, res) => {
   Committee.find()
     .exec()
     .then(async function(comList) {
-      console.log("\n");
-      console.log("*".repeat(45));
-      console.log("*".repeat(45));
-      console.log("Results");
-      console.log("\n");
+      console.log('\n');
+      console.log('*'.repeat(45));
+      console.log('*'.repeat(45));
+      console.log('Results');
+      console.log('\n');
 
       const allResults = await computeResult(comList);
 
-      console.log("*".repeat(45));
-      console.log("*".repeat(45));
-      console.log("Results Successfully Evaluated");
+      console.log('*'.repeat(45));
+      console.log('*'.repeat(45));
+      console.log('Results Successfully Evaluated');
 
-      res.json({ message: "Result Successfully Evaluated.", allResults });
+      res
+        .status(200)
+        .json({ message: 'Result Successfully Evaluated.', allResults });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(500).send("Database Error. Failed To Evaluate Result.");
+      res.status(500).send('Database Error. Failed To Evaluate Result.');
     });
 };
 
@@ -50,12 +52,12 @@ exports.getStats = (req, res) => {
   User.countDocuments((err, totalCnt) => {
     if (err) {
       console.log(err);
-      res.status(500).send("Failed to get voting stats.");
+      res.status(500).send('Failed to get voting stats.');
     }
     User.countDocuments({ hasVoted: true }, (err, votedCnt) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Failed to get voting stats.");
+        res.status(500).send('Failed to get voting stats.');
       }
       console.log(totalCnt);
 
@@ -64,10 +66,10 @@ exports.getStats = (req, res) => {
           { $match: { hasVoted: true } },
           {
             $group: {
-              _id: { $substrBytes: ["$sid", 2, 4] },
-              count: { $sum: 1 }
-            }
-          }
+              _id: { $substrBytes: ['$sid', 2, 4] },
+              count: { $sum: 1 },
+            },
+          },
         ],
         (err, resVoted) => {
           if (err) console.log(err);
@@ -76,20 +78,20 @@ exports.getStats = (req, res) => {
             [
               {
                 $group: {
-                  _id: { $substrBytes: ["$sid", 2, 4] },
-                  count: { $sum: 1 }
-                }
-              }
+                  _id: { $substrBytes: ['$sid', 2, 4] },
+                  count: { $sum: 1 },
+                },
+              },
             ],
             (err, resTotal) => {
               if (err) console.log(err);
               else console.log(resTotal);
               res.json({
-                message: "Voting stats obtained.",
+                message: 'Voting stats obtained.',
                 totalCnt,
                 votedCnt,
                 resVoted,
-                resTotal
+                resTotal,
               });
             }
           );

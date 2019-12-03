@@ -1,11 +1,13 @@
-// Import Dependencies
+// Deps
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const db = require('./config/database');
-require('dotenv').config();
 
+// Database config
+const db = require('./config/database');
+
+// Routes imports
 const candidate = require('./routes/candidate');
 const committee = require('./routes/committee');
 const login = require('./routes/login');
@@ -13,19 +15,30 @@ const result = require('./routes/result');
 const vote = require('./routes/vote');
 const verifyToken = require('./routes/verifyToken');
 
-// Connect To DB
+// DotENV initialisation
+require('dotenv').config();
+
 db.on('error', console.log.bind(console, 'MongoDB Error:'));
 db.on('connected', () => {
   console.log('Connected To DB!');
 });
 
+// Initialize express
 const app = express();
-app.use(helmet()); // Sanitize Data
-app.use(morgan('tiny')); // Custom Request Logging
-app.use(express.json()); // JSON Payload Parser
 
+// Sanitize Data
+app.use(helmet());
+
+// Custom Request Logging
+app.use(morgan('tiny'));
+
+// JSON Payload Parser
+app.use(express.json());
+
+// CORS
 app.use(cors());
 
+// Routes
 app.use('/candidate', candidate);
 app.use('/committee', committee);
 app.use('/login', login);
@@ -33,12 +46,11 @@ app.use('/result', result);
 app.use('/vote', vote);
 app.use('/verifyToken', verifyToken);
 
+// Error handling
 app.use((err, req, res) => {
-  console.log(err.stack);
-  res
+  return res
     .status(500)
     .json({ message: 'Uncaught Internal Server Error, Something Broke.' });
 });
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log('Server Running On Port: ', port));
+module.exports = app;

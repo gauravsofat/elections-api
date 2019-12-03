@@ -1,12 +1,18 @@
 {
   "name": "elections-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "n/a",
   "engines": {
     "node": ">=8"
   },
   "author": "Gaurav Sofat",
   "license": "MIT",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev nodemon server.js",
+    "lint": "eslint .",
+    "start": "node server.js",
+    "test": "jest"
+  },
   "dependencies": {
     "async": "^2.6.1",
     "cors": "^2.8.5",
@@ -18,18 +24,15 @@
     "morgan": "^1.9.0",
     "xlsx": "^0.15.1"
   },
-  "scripts": {
-    "dev": "cross-env NODE_ENV=dev nodemon index.js",
-    "lint": "eslint .",
-    "start": "node index.js"
-  },
   "devDependencies": {
+    "eslint": "^6.7.2",
     "cross-env": "^6.0.3",
-    "eslint": "^6.7.1",
     "husky": "^3.1.0",
+    "jest": "^24.9.0",
     "nodemon": "^2.0.1",
     "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "supertest": "^4.0.2"
   },
   "husky": {
     "hooks": {
