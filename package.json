@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "async": "^2.6.1",
+    "async3": "npm:async@^3.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.16.3",
@@ -25,8 +26,8 @@
     "xlsx": "^0.15.1"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
     "cross-env": "^6.0.3",
+    "eslint": "^6.7.2",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "nodemon": "^2.0.1",

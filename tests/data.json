@@ -1,0 +1,264 @@
+{
+  "test1": {
+    "description": "Basic test",
+    "committees": [
+      {
+        "comName": "com1",
+        "seats": 1,
+        "batches": ["1601"],
+        "candidates": [
+          { "sid": "201601006", "name": "A" },
+          { "sid": "201601004", "name": "B" }
+        ]
+      }
+    ],
+    "candidates": [
+      {
+        "sid": "201601006",
+        "name": "A",
+        "comName": "com1",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601004",
+        "name": "B",
+        "comName": "com1",
+        "batch": "1601",
+        "cpi": 7.9
+      }
+    ],
+    "votes": [
+      {
+        "count": 4,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601006", "201601004"]
+        }
+      },
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601004", "201601006"]
+        }
+      },
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601006"]
+        }
+      },
+
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601004"]
+        }
+      }
+    ],
+    "winners": ["201601006"]
+  },
+  "test2": {
+    "description": "Multiple committees test",
+    "committees": [
+      {
+        "comName": "com1",
+        "seats": 1,
+        "batches": ["1601"],
+        "candidates": [
+          { "sid": "201601004", "name": "A" },
+          { "sid": "201601006", "name": "B" }
+        ]
+      },
+      {
+        "comName": "com2",
+        "seats": 1,
+        "batches": ["1601"],
+        "candidates": [
+          { "sid": "201601003", "name": "C" },
+          { "sid": "201601007", "name": "D" }
+        ]
+      },
+      {
+        "comName": "com3",
+        "seats": 1,
+        "batches": ["1601"],
+        "candidates": [
+          { "sid": "201601002", "name": "E" },
+          { "sid": "201601008", "name": "F" }
+        ]
+      }
+    ],
+    "candidates": [
+      {
+        "sid": "201601004",
+        "name": "A",
+        "comName": "com1",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601006",
+        "name": "B",
+        "comName": "com1",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601003",
+        "name": "C",
+        "comName": "com2",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601007",
+        "name": "D",
+        "comName": "com2",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601002",
+        "name": "E",
+        "comName": "com3",
+        "batch": "1601",
+        "cpi": 7.5
+      },
+      {
+        "sid": "201601008",
+        "name": "F",
+        "comName": "com3",
+        "batch": "1601",
+        "cpi": 7.5
+      }
+    ],
+    "votes": [
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601004", "201601006"]
+        }
+      },
+      {
+        "count": 4,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601006", "201601004"]
+        }
+      },
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601004"]
+        }
+      },
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com1",
+          "prefs": ["201601006"]
+        }
+      },
+      {
+        "count": 1,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com2",
+          "prefs": ["201601003", "201601007"]
+        }
+      },
+      {
+        "count": 4,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com2",
+          "prefs": ["201601007", "201601003"]
+        }
+      },
+      {
+        "count": 2,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com2",
+          "prefs": ["201601003"]
+        }
+      },
+      {
+        "count": 3,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com2",
+          "prefs": ["201601007"]
+        }
+      },
+      {
+        "count": 1,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com3",
+          "prefs": ["201601002", "201601008"]
+        }
+      },
+      {
+        "count": 4,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com3",
+          "prefs": ["201601008", "201601002"]
+        }
+      },
+      {
+        "count": 1,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com3",
+          "prefs": ["201601002"]
+        }
+      },
+
+      {
+        "count": 4,
+        "data": {
+          "sid": "201601201",
+          "batch": "1601",
+          "comName": "com3",
+          "prefs": ["201601008"]
+        }
+      }
+    ],
+    "winners": [
+      { "committee": "com1", "winners": ["201601006"] },
+      { "committee": "com2", "winners": ["201601007"] },
+      { "committee": "com3", "winners": ["201601008"] }
+    ]
+  }
+}
